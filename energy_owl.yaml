@@ -1,0 +1,36 @@
+####################################################
+# Owl Intution - Energy Sensor                     #
+####################################################
+template:
+  - sensor:
+    - name: "Grid Energy Now"
+      unit_of_measurement: "W"
+      state_class: measurement
+      device_class: energy
+      state: >
+        {% if is_state('sensor.owl_electricity_power', 'unknown') or is_state('sensor.sensor.owl_generating', 'unknown') %}
+          nan
+        {% else %}
+          {% set elec = states('sensor.owl_electricity_power') | float %}
+          {% set solar = states('sensor.sensor.owl_generating') | float %}
+          {%- if float(elec) - float(solar) < 0 -%}
+            0
+          {%- elif float(elec) - float(solar) > 0 -%}
+            {{ float(elec) - float(solar) }}
+          {%- endif -%}
+        {%- endif -%}
+
+    - name: "Grid Energy Today"
+      unit_of_measurement: "kWh"
+      state_class: total_increasing
+      device_class: energy
+      state: >
+        {% if is_state('sensor.owl_electricity_today', 'unknown') or is_state('sensor.owl_generated_today', 'unknown') %}
+          nan
+        {% else %}
+          {% set elec = states('sensor.owl_electricity_today') | float %}
+          {% set solar = states('sensor.owl_generated_today') | float %}
+          {% if float(elec) - float(solar) > 0 %}
+            {{ float(elec) - float(solar) }}
+          {%- endif -%}
+        {% endif %}
