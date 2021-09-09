@@ -6,7 +6,7 @@ template:
     - name: "Owl Grid Energy Now"
       unit_of_measurement: "W"
       state_class: measurement
-      device_class: energy
+      device_class: power
       state: >
         {% if is_state('sensor.owl_electricity_power', 'unknown') or is_state('sensor.sensor.owl_generating', 'unknown') %}
           nan
