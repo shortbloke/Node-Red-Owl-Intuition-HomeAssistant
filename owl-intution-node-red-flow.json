@@ -1,0 +1,817 @@
+[
+    {
+        "id": "e38ae847954bcdbb",
+        "type": "tab",
+        "label": "Owl Intuition",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "ca928319c0f4e11c",
+        "type": "udp in",
+        "z": "e38ae847954bcdbb",
+        "name": "",
+        "iface": "",
+        "port": "32000",
+        "ipv": "udp4",
+        "multicast": "false",
+        "group": "",
+        "datatype": "utf8",
+        "x": 100,
+        "y": 340,
+        "wires": [
+            [
+                "733c6f228176f711",
+                "95eec54e7b2ce92a"
+            ]
+        ]
+    },
+    {
+        "id": "733c6f228176f711",
+        "type": "debug",
+        "z": "e38ae847954bcdbb",
+        "name": "Raw UDP Payload",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 310,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "95eec54e7b2ce92a",
+        "type": "xml",
+        "z": "e38ae847954bcdbb",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 270,
+        "y": 340,
+        "wires": [
+            [
+                "8b693809e60bedd4",
+                "48dc2ca63a797cd0"
+            ]
+        ]
+    },
+    {
+        "id": "8b693809e60bedd4",
+        "type": "debug",
+        "z": "e38ae847954bcdbb",
+        "name": "XML Payload",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 450,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "48dc2ca63a797cd0",
+        "type": "switch",
+        "z": "e38ae847954bcdbb",
+        "name": "Payload Divider",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "hask",
+                "v": "solar",
+                "vt": "str"
+            },
+            {
+                "t": "hask",
+                "v": "electricity",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 3,
+        "x": 460,
+        "y": 340,
+        "wires": [
+            [
+                "bf8845239f955f29",
+                "6c5dcbf81fe7c907"
+            ],
+            [
+                "be2414dcbc341e25",
+                "d9bf702e2d151c87"
+            ],
+            [
+                "99b0e31f8140c2ca",
+                "d3dc3ee1c5db395f"
+            ]
+        ]
+    },
+    {
+        "id": "bf8845239f955f29",
+        "type": "debug",
+        "z": "e38ae847954bcdbb",
+        "name": "Solar",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 670,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "be2414dcbc341e25",
+        "type": "debug",
+        "z": "e38ae847954bcdbb",
+        "name": "Electricity",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "99b0e31f8140c2ca",
+        "type": "debug",
+        "z": "e38ae847954bcdbb",
+        "name": "Otherwise",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "6c5dcbf81fe7c907",
+        "type": "function",
+        "z": "e38ae847954bcdbb",
+        "name": "Solar Parser",
+        "func": "if ( msg.payload.solar.day)\n{\n    // Scale wh to kwh\n    if (Number( msg.payload.solar.day[0].generated[0]._) > 0)\n    {\n        msg.payload.solar.day[0].generated[0]._ = Number(msg.payload.solar.day[0].generated[0]._)/ 1000;\n    }\n    if (Number(msg.payload.solar.day[0].exported[0]._) > 0)\n    {\n        msg.payload.solar.day[0].exported[0]._ = Number(msg.payload.solar.day[0].exported[0]._) / 1000;\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 140,
+        "wires": [
+            [
+                "0882174b5871c89f",
+                "6179ffc2835d6925",
+                "4b931c79bb49cf53",
+                "08090fdc7b859a22"
+            ]
+        ]
+    },
+    {
+        "id": "0882174b5871c89f",
+        "type": "ha-entity",
+        "z": "e38ae847954bcdbb",
+        "name": "Solar Generating",
+        "server": "1e379208.ea5f5e",
+        "version": 1,
+        "debugenabled": false,
+        "outputs": 1,
+        "entityType": "sensor",
+        "config": [
+            {
+                "property": "name",
+                "value": "Owl_Solar_Generating"
+            },
+            {
+                "property": "device_class",
+                "value": "power"
+            },
+            {
+                "property": "icon",
+                "value": "mdi:flash"
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": "W"
+            }
+        ],
+        "state": "payload.solar.current[0].generating[0]._",
+        "stateType": "msg",
+        "attributes": [
+            {
+                "property": "timestamp",
+                "value": "payload.solar.timestamp[0]",
+                "valueType": "msg"
+            }
+        ],
+        "resend": true,
+        "outputLocation": "",
+        "outputLocationType": "none",
+        "inputOverride": "allow",
+        "outputOnStateChange": false,
+        "outputPayload": "$entity().state ? \"on\": \"off\"",
+        "outputPayloadType": "jsonata",
+        "x": 990,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6179ffc2835d6925",
+        "type": "ha-entity",
+        "z": "e38ae847954bcdbb",
+        "name": "Solar Exporting",
+        "server": "1e379208.ea5f5e",
+        "version": 1,
+        "debugenabled": false,
+        "outputs": 1,
+        "entityType": "sensor",
+        "config": [
+            {
+                "property": "name",
+                "value": "Owl_Solar_Exporting"
+            },
+            {
+                "property": "device_class",
+                "value": "power"
+            },
+            {
+                "property": "icon",
+                "value": "mdi:flash"
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": "W"
+            }
+        ],
+        "state": "payload.solar.current[0].exporting[0]._",
+        "stateType": "msg",
+        "attributes": [
+            {
+                "property": "timestamp",
+                "value": "payload.solar.timestamp[0]",
+                "valueType": "msg"
+            }
+        ],
+        "resend": true,
+        "outputLocation": "",
+        "outputLocationType": "none",
+        "inputOverride": "allow",
+        "outputOnStateChange": false,
+        "outputPayload": "$entity().state ? \"on\": \"off\"",
+        "outputPayloadType": "jsonata",
+        "x": 980,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4b931c79bb49cf53",
+        "type": "ha-entity",
+        "z": "e38ae847954bcdbb",
+        "name": "Solar Generated Today",
+        "server": "1e379208.ea5f5e",
+        "version": 1,
+        "debugenabled": false,
+        "outputs": 1,
+        "entityType": "sensor",
+        "config": [
+            {
+                "property": "name",
+                "value": "Owl_Solar_Generated_Today"
+            },
+            {
+                "property": "device_class",
+                "value": "energy"
+            },
+            {
+                "property": "icon",
+                "value": "mdi:counter"
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": "kWh"
+            }
+        ],
+        "state": "payload.solar.day[0].generated[0]._",
+        "stateType": "msg",
+        "attributes": [
+            {
+                "property": "timestamp",
+                "value": "payload.solar.timestamp[0]",
+                "valueType": "msg"
+            },
+            {
+                "property": "state_class",
+                "value": "total_increasing",
+                "valueType": "str"
+            }
+        ],
+        "resend": true,
+        "outputLocation": "",
+        "outputLocationType": "none",
+        "inputOverride": "allow",
+        "outputOnStateChange": false,
+        "outputPayload": "$entity().state ? \"on\": \"off\"",
+        "outputPayloadType": "jsonata",
+        "x": 1010,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "08090fdc7b859a22",
+        "type": "ha-entity",
+        "z": "e38ae847954bcdbb",
+        "name": "Solar Exported Today",
+        "server": "1e379208.ea5f5e",
+        "version": 1,
+        "debugenabled": false,
+        "outputs": 1,
+        "entityType": "sensor",
+        "config": [
+            {
+                "property": "name",
+                "value": "Owl_Solar_Exported_Today"
+            },
+            {
+                "property": "device_class",
+                "value": "energy"
+            },
+            {
+                "property": "icon",
+                "value": "mdi:counter"
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": "kWh"
+            }
+        ],
+        "state": "payload.solar.day[0].exported[0]._",
+        "stateType": "msg",
+        "attributes": [
+            {
+                "property": "timestamp",
+                "value": "payload.solar.timestamp[0]",
+                "valueType": "msg"
+            },
+            {
+                "property": "state_class",
+                "value": "total_increasing",
+                "valueType": "str"
+            }
+        ],
+        "resend": true,
+        "outputLocation": "",
+        "outputLocationType": "none",
+        "inputOverride": "allow",
+        "outputOnStateChange": false,
+        "outputPayload": "$entity().state ? \"on\": \"off\"",
+        "outputPayloadType": "jsonata",
+        "x": 1000,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d9bf702e2d151c87",
+        "type": "function",
+        "z": "e38ae847954bcdbb",
+        "name": "Electricity Parser",
+        "func": "if ( msg.payload.electricity.property[0].day)\n{\n    // Scale wh to kwh\n    if (Number( msg.payload.electricity.property[0].day[0].wh[0] ) > 0)\n    {\n        msg.payload.electricity.property[0].day[0].wh[0] = Number(msg.payload.electricity.property[0].day[0].wh[0]) / 1000;\n    }\n    // Scale costs from GB Pence to GB Pounds\n    if (Number(msg.payload.electricity.property[0].current[0].cost[0]) > 0)\n    {\n     msg.payload.electricity.property[0].current[0].cost[0] = Number(msg.payload.electricity.property[0].current[0].cost[0]) / 100;\n    }\n    if (Number(msg.payload.electricity.property[0].day[0].cost[0]) > 0)\n    {\n        msg.payload.electricity.property[0].day[0].cost[0] = Number(msg.payload.electricity.property[0].day[0].cost[0]) / 100;\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 460,
+        "wires": [
+            [
+                "64473cfba051be4e",
+                "c9cad0287c2c847c",
+                "d71d89c1100e3f0e",
+                "9149fc88142676f9",
+                "2b1cfd21cab496f5",
+                "d0e77e58df6a6b8d",
+                "6b2a0255027348d5"
+            ]
+        ]
+    },
+    {
+        "id": "64473cfba051be4e",
+        "type": "ha-entity",
+        "z": "e38ae847954bcdbb",
+        "name": "Electricity Power",
+        "server": "1e379208.ea5f5e",
+        "version": 1,
+        "debugenabled": false,
+        "outputs": 1,
+        "entityType": "sensor",
+        "config": [
+            {
+                "property": "name",
+                "value": "Owl_Electricity_Power"
+            },
+            {
+                "property": "device_class",
+                "value": "power"
+            },
+            {
+                "property": "icon",
+                "value": "mdi:flash"
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": "W"
+            }
+        ],
+        "state": "payload.electricity.property[0].current[0].watts[0]",
+        "stateType": "msg",
+        "attributes": [
+            {
+                "property": "timestamp",
+                "value": "payload.electricity.timestamp[0]",
+                "valueType": "msg"
+            }
+        ],
+        "resend": true,
+        "outputLocation": "",
+        "outputLocationType": "none",
+        "inputOverride": "allow",
+        "outputOnStateChange": false,
+        "outputPayload": "$entity().state ? \"on\": \"off\"",
+        "outputPayloadType": "jsonata",
+        "x": 980,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c9cad0287c2c847c",
+        "type": "ha-entity",
+        "z": "e38ae847954bcdbb",
+        "name": "Electricity Today",
+        "server": "1e379208.ea5f5e",
+        "version": 1,
+        "debugenabled": false,
+        "outputs": 1,
+        "entityType": "sensor",
+        "config": [
+            {
+                "property": "name",
+                "value": "Owl_Electricity_Today"
+            },
+            {
+                "property": "device_class",
+                "value": "energy"
+            },
+            {
+                "property": "icon",
+                "value": "mdi:counter"
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": "kwh"
+            }
+        ],
+        "state": "msg.payload.electricity.property[0].day[0].wh[0]",
+        "stateType": "msg",
+        "attributes": [
+            {
+                "property": "timestamp",
+                "value": "payload.electricity.timestamp[0]",
+                "valueType": "msg"
+            },
+            {
+                "property": "state_class",
+                "value": "total_increasing",
+                "valueType": "str"
+            }
+        ],
+        "resend": true,
+        "outputLocation": "",
+        "outputLocationType": "none",
+        "inputOverride": "allow",
+        "outputOnStateChange": false,
+        "outputPayload": "$entity().state ? \"on\": \"off\"",
+        "outputPayloadType": "jsonata",
+        "x": 980,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d71d89c1100e3f0e",
+        "type": "ha-entity",
+        "z": "e38ae847954bcdbb",
+        "name": "Signal - RSSI",
+        "server": "1e379208.ea5f5e",
+        "version": 1,
+        "debugenabled": false,
+        "outputs": 1,
+        "entityType": "sensor",
+        "config": [
+            {
+                "property": "name",
+                "value": "Owl_Signal_RSSI"
+            },
+            {
+                "property": "device_class",
+                "value": "signal_strength"
+            },
+            {
+                "property": "icon",
+                "value": "mdi:signal"
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": "dBm"
+            }
+        ],
+        "state": "payload.electricity.signal[0].$.rssi",
+        "stateType": "msg",
+        "attributes": [
+            {
+                "property": "timestamp",
+                "value": "payload.electricity.timestamp[0]",
+                "valueType": "msg"
+            }
+        ],
+        "resend": true,
+        "outputLocation": "",
+        "outputLocationType": "none",
+        "inputOverride": "allow",
+        "outputOnStateChange": false,
+        "outputPayload": "$entity().state ? \"on\": \"off\"",
+        "outputPayloadType": "jsonata",
+        "x": 980,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9149fc88142676f9",
+        "type": "ha-entity",
+        "z": "e38ae847954bcdbb",
+        "name": "Battery Level",
+        "server": "1e379208.ea5f5e",
+        "version": 1,
+        "debugenabled": false,
+        "outputs": 1,
+        "entityType": "sensor",
+        "config": [
+            {
+                "property": "name",
+                "value": "Owl_Electricity Battery_Level"
+            },
+            {
+                "property": "device_class",
+                "value": "battery"
+            },
+            {
+                "property": "icon",
+                "value": "mdi:battery"
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": "%"
+            }
+        ],
+        "state": "payload.electricity.battery[0].$.level",
+        "stateType": "msg",
+        "attributes": [
+            {
+                "property": "timestamp",
+                "value": "payload.electricity.timestamp[0]",
+                "valueType": "msg"
+            }
+        ],
+        "resend": true,
+        "outputLocation": "",
+        "outputLocationType": "none",
+        "inputOverride": "allow",
+        "outputOnStateChange": false,
+        "outputPayload": "$entity().state ? \"on\": \"off\"",
+        "outputPayloadType": "jsonata",
+        "x": 970,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2b1cfd21cab496f5",
+        "type": "ha-entity",
+        "z": "e38ae847954bcdbb",
+        "name": "Signal - LQI",
+        "server": "1e379208.ea5f5e",
+        "version": 1,
+        "debugenabled": false,
+        "outputs": 1,
+        "entityType": "sensor",
+        "config": [
+            {
+                "property": "name",
+                "value": "Owl_Signal_LSI"
+            },
+            {
+                "property": "device_class",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": ""
+            }
+        ],
+        "state": "payload.electricity.signal[0].$.lqi",
+        "stateType": "msg",
+        "attributes": [
+            {
+                "property": "timestamp",
+                "value": "payload.electricity.timestamp[0]",
+                "valueType": "msg"
+            }
+        ],
+        "resend": true,
+        "outputLocation": "",
+        "outputLocationType": "none",
+        "inputOverride": "allow",
+        "outputOnStateChange": false,
+        "outputPayload": "$entity().state ? \"on\": \"off\"",
+        "outputPayloadType": "jsonata",
+        "x": 970,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d3dc3ee1c5db395f",
+        "type": "function",
+        "z": "e38ae847954bcdbb",
+        "name": "Not Implemented",
+        "func": "node.warn( \"Parsing not implemented for received payload type\" );\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d0e77e58df6a6b8d",
+        "type": "ha-entity",
+        "z": "e38ae847954bcdbb",
+        "name": "Cost",
+        "server": "1e379208.ea5f5e",
+        "version": 1,
+        "debugenabled": false,
+        "outputs": 1,
+        "entityType": "sensor",
+        "config": [
+            {
+                "property": "name",
+                "value": "Owl_Cost"
+            },
+            {
+                "property": "device_class",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": "mdi:currency-gbp"
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": "GBP"
+            }
+        ],
+        "state": "payload.electricity.property[0].current[0].cost[0]",
+        "stateType": "msg",
+        "attributes": [
+            {
+                "property": "timestamp",
+                "value": "payload.electricity.timestamp[0]",
+                "valueType": "msg"
+            }
+        ],
+        "resend": true,
+        "outputLocation": "",
+        "outputLocationType": "none",
+        "inputOverride": "allow",
+        "outputOnStateChange": false,
+        "outputPayload": "$entity().state ? \"on\": \"off\"",
+        "outputPayloadType": "jsonata",
+        "x": 950,
+        "y": 640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6b2a0255027348d5",
+        "type": "ha-entity",
+        "z": "e38ae847954bcdbb",
+        "name": "Cost Today",
+        "server": "1e379208.ea5f5e",
+        "version": 1,
+        "debugenabled": false,
+        "outputs": 1,
+        "entityType": "sensor",
+        "config": [
+            {
+                "property": "name",
+                "value": "Owl_Cost_Today"
+            },
+            {
+                "property": "device_class",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": "mdi:currency-gbp"
+            },
+            {
+                "property": "unit_of_measurement",
+                "value": "GBP"
+            }
+        ],
+        "state": "payload.electricity.property[0].day[0].cost[0]",
+        "stateType": "msg",
+        "attributes": [
+            {
+                "property": "state_class",
+                "value": "total_increasing",
+                "valueType": "str"
+            },
+            {
+                "property": "timetstamp",
+                "value": "payload.electricity.timestamp[0]",
+                "valueType": "msg"
+            }
+        ],
+        "resend": true,
+        "outputLocation": "",
+        "outputLocationType": "none",
+        "inputOverride": "allow",
+        "outputOnStateChange": false,
+        "outputPayload": "$entity().state ? \"on\": \"off\"",
+        "outputPayloadType": "jsonata",
+        "x": 970,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1e379208.ea5f5e",
+        "type": "server",
+        "name": "Home Assistant",
+        "version": 1,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true,
+        "cacheJson": true
+    }
+]
