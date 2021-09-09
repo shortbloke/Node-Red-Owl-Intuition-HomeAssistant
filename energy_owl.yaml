@@ -3,7 +3,7 @@
 ####################################################
 template:
   - sensor:
-    - name: "Grid Energy Now"
+    - name: "Owl Grid Energy Now"
       unit_of_measurement: "W"
       state_class: measurement
       device_class: energy
@@ -20,7 +20,7 @@ template:
           {%- endif -%}
         {%- endif -%}
 
-    - name: "Grid Energy Today"
+    - name: "Owl Grid Energy Today"
       unit_of_measurement: "kWh"
       state_class: total_increasing
       device_class: energy
