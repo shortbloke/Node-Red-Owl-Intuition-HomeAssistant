@@ -96,12 +96,17 @@
                 "vt": "str"
             },
             {
+                "t": "hask",
+                "v": "weather",
+                "vt": "str"
+            },
+            {
                 "t": "else"
             }
         ],
         "checkall": "false",
         "repair": false,
-        "outputs": 3,
+        "outputs": 4,
         "x": 460,
         "y": 340,
         "wires": [
@@ -112,6 +117,10 @@
             [
                 "be2414dcbc341e25",
                 "d9bf702e2d151c87"
+            ],
+            [
+                "6c1126c9db226ede",
+                "d3dc3ee1c5db395f"
             ],
             [
                 "99b0e31f8140c2ca",
@@ -150,7 +159,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 680,
-        "y": 400,
+        "y": 480,
         "wires": []
     },
     {
@@ -166,8 +175,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 680,
-        "y": 640,
+        "x": 660,
+        "y": 800,
         "wires": []
     },
     {
@@ -341,7 +350,7 @@
         "outputOnStateChange": false,
         "outputPayload": "$entity().state ? \"on\": \"off\"",
         "outputPayloadType": "jsonata",
-        "x": 1010,
+        "x": 1000,
         "y": 180,
         "wires": [
             []
@@ -407,14 +416,14 @@
         "type": "function",
         "z": "e38ae847954bcdbb",
         "name": "Electricity Parser",
-        "func": "if ( msg.payload.electricity.property[0].day)\n{\n    // Scale wh to kwh\n    if (Number( msg.payload.electricity.property[0].day[0].wh[0] ) > 0)\n    {\n        msg.payload.electricity.property[0].day[0].wh[0] = Number(msg.payload.electricity.property[0].day[0].wh[0]) / 1000;\n    }\n    // Scale costs from GB Pence to GB Pounds\n    if (Number(msg.payload.electricity.property[0].current[0].cost[0]) > 0)\n    {\n     msg.payload.electricity.property[0].current[0].cost[0] = Number(msg.payload.electricity.property[0].current[0].cost[0]) / 100;\n    }\n    if (Number(msg.payload.electricity.property[0].day[0].cost[0]) > 0)\n    {\n        msg.payload.electricity.property[0].day[0].cost[0] = Number(msg.payload.electricity.property[0].day[0].cost[0]) / 100;\n    }\n}\nreturn msg;",
+        "func": "if ( msg.payload.electricity.property[0].day)\n{\n    // Scale wh to kwh\n    if (Number( msg.payload.electricity.property[0].day[0].wh[0] ) > 0)\n    {\n        msg.payload.electricity.property[0].day[0].wh[0] = Number(msg.payload.electricity.property[0].day[0].wh[0]) / 1000;\n    }\n    // Scale costs from GB Pence to GB Pounds\n    if (Number(msg.payload.electricity.property[0].current[0].cost[0]) > 0)\n    {\n     msg.payload.electricity.property[0].current[0].cost[0] = Number(msg.payload.electricity.property[0].current[0].cost[0]) / 100;\n    }\n    if (Number(msg.payload.electricity.property[0].day[0].cost[0]) > 0)\n    {\n        msg.payload.electricity.property[0].day[0].cost[0] = Number(msg.payload.electricity.property[0].day[0].cost[0]) / 100;\n    }\n    // Convert Battery value from string to a number, remove last character from the string (% sign)\n    msg.payload.electricity.battery[0].$.level = msg.payload.electricity.battery[0].$.level.slice(0,-1)\n}\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 710,
-        "y": 460,
+        "y": 520,
         "wires": [
             [
                 "64473cfba051be4e",
@@ -693,8 +702,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 710,
-        "y": 700,
+        "x": 690,
+        "y": 840,
         "wires": [
             []
         ]
@@ -803,6 +812,23 @@
         "wires": [
             []
         ]
+    },
+    {
+        "id": "6c1126c9db226ede",
+        "type": "debug",
+        "z": "e38ae847954bcdbb",
+        "name": "Weather",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 760,
+        "wires": []
     },
     {
         "id": "1e379208.ea5f5e",
